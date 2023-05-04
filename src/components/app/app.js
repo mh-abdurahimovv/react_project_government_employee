@@ -20,10 +20,10 @@ class App extends Component {
         super(props);
         this.state = {
              data:  [
-                {name: 'Abdurahimov MH', salary: 950,  increase: true, rise: true, id: 3},
-                {name: 'Ivanov S',  salary: 1000, increase: false, rise: true, id: 1},
-                {name: 'Kolonin A',       salary: 900,  increase: false, rise: false, id: 2},
-                {name: 'Panin S', salary: 700,  increase: true, rise: false, id: 3},
+                {name: 'Abdurahimov MH', salary: 950,  increase: true, rise: true, id: 1},
+                {name: 'Ivanov S',  salary: 1000, increase: false, rise: true, id: 2},
+                {name: 'Kolonin A',  salary: 900,  increase: false, rise: false, id: 3},
+                {name: 'Panin S', salary: 700,  increase: true, rise: false, id: 4},
                 
             ],
             term: '',
