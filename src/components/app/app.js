@@ -20,67 +20,123 @@ class App extends Component {
         super(props);
         this.state = {
              data:  [
-                {name: 'Abdurahimov Muhammadmahdi',  salary: 10000, increase: false, id: 1},
-                {name: 'Abdurahimov Aliakbar',       salary: 9000,  increase: false, id: 2},
-                {name: 'Abdurahimov Muhammadhuseyn', salary: 7000,  increase: false, id: 3},
-            ]
+                {name: 'Abdurahimov MH', salary: 950,  increase: true, rise: true, id: 3},
+                {name: 'Ivanov S',  salary: 1000, increase: false, rise: true, id: 1},
+                {name: 'Kolonin A',       salary: 900,  increase: false, rise: false, id: 2},
+                {name: 'Panin S', salary: 700,  increase: true, rise: false, id: 3},
+                
+            ],
+            term: '',
+            filter: 'all' //all, highJob, bigSalary 
 
         }
     }
 
-    deleteItem = (id) => {
-        this.setState(({data})=> {
-            // const index = data.findIndex(elem => elem.id === id);
-            // console.log(index)
+        deleteItem = (id) => {
+            this.setState(({data})=> {
+                // const index = data.findIndex(elem => elem.id === id);
+                // console.log(index)
 
-            return {
-                data: data.filter(item => item.id !== id)
-            }
-        })
+                return {
+                    data: data.filter(item => item.id !== id)
+                }
+            })
+        }
+
+
+        addItem = (name, salary) => {
+            this.setState(({data}) => {
+                const newItem = {
+                    name,
+                    salary,
+                    increase: false,
+                    rise: false,
+                    id: uuidv4()
+                }
+                const newArr = [...data, newItem];
+
+                return{
+                    data: newArr
+                }
+
+            })
+        }
+
+    
+        onToggleProp = (id, prop) => {
+            this.setState(({data}) => {
+                const index = data.findIndex(elem => elem.id === id);
+
+                const oldObject = data[index];
+                const newObject = {...oldObject, [prop]: !oldObject[prop] };
+                const newArr = [...data.slice(0, index), newObject, ...data.slice(index + 1)];
+
+                return {
+                    data: newArr
+                }
+            });
+        }
+
+        searchEmployee = (items, searchString) => {
+            if(searchString.length === 0) {
+                return items
+            };
+
+            return items.filter(item => {
+                return item.name.indexOf(searchString) > -1
+            });
     }
 
-
-    addItem = (name, salary) => {
-        this.setState(({data}) => {
-            const newItem = {
-                name,
-                salary,
-                increase: false,
-                id: uuidv4
-            }
-            const newArr = [...data, newItem];
-
-            return{
-                data: newArr
-            }
-
-        })
+        onUpdateSearch = (inputString) => {
+            this.setState({term: inputString})
     }
 
-   
+        filter = (items, filterStatus) => {
+            switch(filterStatus) {
+                case 'all' :
+                    return items;
+                case 'highJob' :
+                    return items.filter((item) => item.rise)
+                case 'bigSalary' :
+                    return items.filter( (item) => item.salary >= 1000)
+                default: 
+                    return items; 
 
+            }
+        }
 
-
-
+        onFilterChange = (filterChanged) => {
+            this.setState({filter: filterChanged})
+        }
 
 
     render() {
 
-        const {data} = this.state
+        const {data, term, filter} = this.state;
+
+        const employees = this.state.data.length;
+        const increasedSalary = this.state.data.filter(item => item.increase).length;
+        const visibleData = this.filter(this.searchEmployee(data, term), filter);
+
+
 
         return (
             <div className="app">
-                <AppInfo />
+                <AppInfo 
+                employees={employees} 
+                increasedSalary={increasedSalary} />
     
             <div className="search-pannel">
-                <SearchPannel />
+                <SearchPannel onUpdateSearch={this.onUpdateSearch} />
     
-                <AppFilter />
+                <AppFilter filter={filter} 
+                           onFilterChange={this.onFilterChange} />
             </div>
             <div>
                 <EmployersList 
-                        data={data}
-                        onDelete={this.deleteItem}/>
+                        data={visibleData}
+                        onDelete={this.deleteItem}
+                        onToggleProp ={this.onToggleProp} />
                 <EmployersAddForm onAdd={this.addItem}/>
             </div>
             
